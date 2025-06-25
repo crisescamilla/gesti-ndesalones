@@ -1,5 +1,6 @@
 "use client"
 
+import React from 'react'
 import { useState, useEffect } from "react"
 import { Sparkles, Settings, Calendar, MapPin, Phone, Clock, Instagram, MessageCircle } from "lucide-react"
 import ClientBooking from "./components/ClientBooking"
@@ -22,6 +23,7 @@ import {
 import { useTheme } from "./hooks/useTheme"
 import { useTenant } from "./hooks/useTenant"
 import type { AdminUser, AuthSession } from "./types"
+import TenantSelector from './components/TenantSelector'
 
 // Utility functions for social media URL processing
 const getInstagramUsername = (input: string): string => {
