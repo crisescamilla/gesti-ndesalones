@@ -27,7 +27,7 @@ const TenantSelector: React.FC = () => {
   const [isDeleteBlocked, setIsDeleteBlocked] = useState(false);
   const [deleteBlockTimeRemaining, setDeleteBlockTimeRemaining] = useState(0);
   
-  const { navigateToTenant } = useTenantURL();
+  useTenantURL();
 
   const REGISTRATION_KEY = 'RegNeg2024';
   const DELETE_KEY = 'RegNeg2024';

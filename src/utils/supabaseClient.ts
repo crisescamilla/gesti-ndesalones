@@ -23,16 +23,28 @@ export const testSupabaseConnection = async (): Promise<{ success: boolean; mess
   }
 };
 
-const { data, error } = await supabase
-  .from('negocios')
-  .insert([{
-    nombre: 'Mi Salón',
-    slug: 'mi-salon',
-    // ... otros campos
-  }])
+// Función para insertar negocio (si la necesitas)
+export const insertNegocio = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('negocios')
+      .insert([{
+        nombre: 'Mi Salón',
+        slug: 'mi-salon',
+        // ... otros campos
+      }]);
+    
+    
 
-if (error) {
-  console.error('Error al guardar:', error)
-} else {
-  console.log('Negocio guardado:', data)
-} 
+    if (error) {
+      console.error('Error al guardar:', error);
+      return { success: false, error };
+    } else {
+      console.log('Negocio guardado:', data);
+      return { success: true, data };
+    }
+  } catch (error) {
+    console.error('Error inesperado:', error);
+    return { success: false, error };
+  }
+}; 

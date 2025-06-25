@@ -36,6 +36,8 @@ const COLOR_OPTIONS = [
   { name: "Fucsia", value: "#FF1493", description: "Audaz y moderno" },
 ]
 
+const getColorStyle = (color: string) => ({ backgroundColor: color });
+
 const TenantRegistration: React.FC = () => {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
@@ -65,7 +67,7 @@ const TenantRegistration: React.FC = () => {
     secondaryColor: "#8b5cf6",
   })
 
-  const { colors } = useTheme()
+  useTheme()
 
   const handleOwnerSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -237,7 +239,6 @@ const TenantRegistration: React.FC = () => {
     label,
     value,
     onChange,
-    colorType,
   }: {
     label: string
     value: string
@@ -256,7 +257,10 @@ const TenantRegistration: React.FC = () => {
           className="w-full flex items-center justify-between px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white"
         >
           <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 rounded-full border-2 border-gray-200" style={{ backgroundColor: value }} />
+            <div
+              className="w-8 h-8 rounded-full border-2 border-gray-200"
+              style={getColorStyle(value)}
+            />
             <span className="text-sm font-medium">{selectedColor?.name || "Color personalizado"}</span>
           </div>
           <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -282,7 +286,7 @@ const TenantRegistration: React.FC = () => {
                   >
                     <div
                       className="w-8 h-8 rounded-full border-2 border-gray-200 flex-shrink-0"
-                      style={{ backgroundColor: color.value }}
+                      style={getColorStyle(color.value)}
                     />
                     <div className="flex-1 text-left">
                       <div className="font-medium text-sm text-gray-900">{color.name}</div>
@@ -677,7 +681,7 @@ const TenantRegistration: React.FC = () => {
                         <div className="flex items-center space-x-3">
                           <div
                             className="w-12 h-12 rounded-lg border-2 border-gray-200"
-                            style={{ backgroundColor: tenantData.primaryColor }}
+                            style={getColorStyle(tenantData.primaryColor)}
                           />
                           <div>
                             <p className="font-medium text-sm">Color Primario</p>
@@ -688,7 +692,7 @@ const TenantRegistration: React.FC = () => {
                         <div className="flex items-center space-x-3">
                           <div
                             className="w-12 h-12 rounded-lg border-2 border-gray-200"
-                            style={{ backgroundColor: tenantData.secondaryColor }}
+                            style={getColorStyle(tenantData.secondaryColor)}
                           />
                           <div>
                             <p className="font-medium text-sm">Color Secundario</p>

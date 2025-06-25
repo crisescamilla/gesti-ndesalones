@@ -32,7 +32,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   const [validation, setValidation] = useState<PhoneValidationResult>({ isValid: true })
   const [isFocused, setIsFocused] = useState(false)
   const [hasBeenTouched, setHasBeenTouched] = useState(false)
-  const { colors } = useTheme()
+  useTheme()
 
   // Validate phone number whenever value changes
   useEffect(() => {
@@ -74,43 +74,6 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   }
 
   const inputState = getInputState()
-
-  // Safe color access with fallbacks
-  const safeColors = {
-    background: colors?.background || "#f8fafc",
-    surface: colors?.surface || "#ffffff",
-    border: colors?.border || "#e5e7eb",
-    text: colors?.text || "#1f2937",
-    textSecondary: colors?.textSecondary || "#6b7280",
-    primary: colors?.primary || "#0ea5e9",
-    success: colors?.success || "#10b981",
-    error: colors?.error || "#ef4444",
-    warning: colors?.warning || "#f59e0b",
-  }
-
-  const getBorderColor = () => {
-    switch (inputState) {
-      case "success":
-        return safeColors.success
-      case "error":
-        return safeColors.error
-      case "default":
-        return isFocused ? safeColors.primary : safeColors.border
-      default:
-        return safeColors.border
-    }
-  }
-
-  const getIconColor = () => {
-    switch (inputState) {
-      case "success":
-        return safeColors.success
-      case "error":
-        return safeColors.error
-      default:
-        return safeColors.textSecondary
-    }
-  }
 
   return (
     <div className={`space-y-2 ${className}`}>

@@ -30,6 +30,7 @@ export interface SupabaseTenant {
   language: string;
 }
 
+
 export interface SupabaseTenantOwner {
   id: string;
   email: string;
