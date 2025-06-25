@@ -3,6 +3,7 @@ import { Plus, Building2, Search, ArrowRight, Sparkles, Shield, Eye, EyeOff, Ale
 import { Tenant } from '../types/tenant';
 import { getTenants, businessTypeConfigs, deleteTenant } from '../utils/tenantManager';
 import { useTenantURL } from '../hooks/useTenant';
+import SupabaseSyncManager from './SupabaseSyncManager';
 
 const TenantSelector: React.FC = () => {
   const [tenants, setTenants] = useState<Tenant[]>([]);
@@ -32,6 +33,9 @@ const TenantSelector: React.FC = () => {
   const DELETE_KEY = 'RegNeg2024';
   const MAX_ATTEMPTS = 50;
   const BLOCK_DURATION = 15 * 60 * 1000; // 15 minutos
+
+  // Agregar un botón o sección para el administrador de sincronización
+  const [showSyncManager, setShowSyncManager] = useState(false);
 
   useEffect(() => {
     loadTenants();
@@ -297,6 +301,7 @@ const TenantSelector: React.FC = () => {
                 value={selectedBusinessType}
                 onChange={(e) => setSelectedBusinessType(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                aria-label="Filtrar por tipo de negocio"
               >
                 <option value="all">Todos los tipos</option>
                 {businessTypeConfigs.map(config => (
@@ -306,6 +311,23 @@ const TenantSelector: React.FC = () => {
                 ))}
               </select>
             </div>
+          </div>
+        </div>
+
+        {/* Sync Manager Section - Solo visible para administradores */}
+        <div className="max-w-4xl mx-auto mb-8">
+          <div className="bg-white rounded-2xl shadow-xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Administración de Base de Datos</h3>
+              <button
+                onClick={() => setShowSyncManager(!showSyncManager)}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                {showSyncManager ? 'Ocultar' : 'Mostrar'} Sincronización
+              </button>
+            </div>
+            
+            {showSyncManager && <SupabaseSyncManager />}
           </div>
         </div>
 
@@ -511,6 +533,7 @@ const TenantSelector: React.FC = () => {
                 <button
                   onClick={closeRegistrationAccess}
                   className="text-white hover:text-gray-200 transition-colors"
+                  title="Cerrar"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -614,6 +637,7 @@ const TenantSelector: React.FC = () => {
                 <button
                   onClick={closeDeleteConfirmation}
                   className="text-white hover:text-gray-200 transition-colors"
+                  title="Cerrar"
                 >
                   <X className="w-6 h-6" />
                 </button>

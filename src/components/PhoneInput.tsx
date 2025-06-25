@@ -17,6 +17,8 @@ interface PhoneInputProps {
   showFormatHint?: boolean
 }
 
+
+
 const PhoneInput: React.FC<PhoneInputProps> = ({
   value,
   onChange,
@@ -115,7 +117,11 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
       {/* Input Field */}
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <Phone className="h-5 w-5 transition-colors" style={{ color: getIconColor() }} />
+          <Phone className={`h-5 w-5 transition-colors ${
+            inputState === 'success' ? 'text-green-500' : 
+            inputState === 'error' ? 'text-red-500' : 
+            'text-gray-400'
+          }`} />
         </div>
 
         <input
@@ -129,14 +135,12 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
           disabled={disabled}
           className={`
             w-full pl-10 pr-10 py-3 rounded-xl border-2 transition-all duration-200
-            focus:outline-none focus:ring-0
+            focus:outline-none focus:ring-0 bg-white
             ${disabled ? "opacity-50 cursor-not-allowed" : ""}
+            ${inputState === 'success' ? 'border-green-500 text-gray-900' : ''}
+            ${inputState === 'error' ? 'border-red-500 text-gray-900' : ''}
+            ${inputState === 'default' ? 'border-gray-300 text-gray-900 focus:border-blue-500' : ''}
           `}
-          style={{
-            backgroundColor: safeColors.surface,
-            borderColor: getBorderColor(),
-            color: safeColors.text,
-          }}
           autoComplete="tel"
           inputMode="numeric"
         />
@@ -146,9 +150,9 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
           {hasBeenTouched && (
             <>
               {validation.isValid ? (
-                <CheckCircle className="h-5 w-5" style={{ color: safeColors.success }} />
+                <CheckCircle className="h-5 w-5 text-green-500" />
               ) : (
-                <AlertCircle className="h-5 w-5" style={{ color: safeColors.error }} />
+                <AlertCircle className="h-5 w-5 text-red-500" />
               )}
             </>
           )}
@@ -157,27 +161,15 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
 
       {/* Format Hint */}
       {showFormatHint && !hasBeenTouched && (
-        <div
-          className="flex items-center text-sm space-x-2 px-3 py-2 rounded-lg"
-          style={{
-            backgroundColor: `${safeColors.primary}0d`,
-            color: safeColors.textSecondary,
-          }}
-        >
-          <Info className="h-4 w-4" style={{ color: safeColors.primary }} />
+        <div className="flex items-center text-sm space-x-2 px-3 py-2 rounded-lg bg-blue-50 text-gray-600">
+          <Info className="h-4 w-4 text-blue-500" />
           <span>Formatos aceptados: (123) 456-7890, 123-456-7890, +52 123 456 7890</span>
         </div>
       )}
 
       {/* Validation Message */}
       {hasBeenTouched && !validation.isValid && validation.error && (
-        <div
-          className="flex items-center text-sm space-x-2 px-3 py-2 rounded-lg"
-          style={{
-            backgroundColor: `${safeColors.error}0d`,
-            color: safeColors.error,
-          }}
-        >
+        <div className="flex items-center text-sm space-x-2 px-3 py-2 rounded-lg bg-red-50 text-red-600">
           <AlertCircle className="h-4 w-4" />
           <span>{validation.error}</span>
         </div>
@@ -185,13 +177,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
 
       {/* Success Message */}
       {hasBeenTouched && validation.isValid && value && (
-        <div
-          className="flex items-center text-sm space-x-2 px-3 py-2 rounded-lg"
-          style={{
-            backgroundColor: `${safeColors.success}0d`,
-            color: safeColors.success,
-          }}
-        >
+        <div className="flex items-center text-sm space-x-2 px-3 py-2 rounded-lg bg-green-50 text-green-600">
           <CheckCircle className="h-4 w-4" />
           <span>Número válido {validation.formatted && `(${validation.formatted})`}</span>
         </div>
@@ -199,7 +185,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
 
       {/* Character Count */}
       {(isFocused || hasBeenTouched) && (
-        <div className="text-xs text-right" style={{ color: safeColors.textSecondary }}>
+        <div className="text-xs text-right text-gray-500">
           {value.replace(/\D/g, "").length} / 10+ dígitos
         </div>
       )}

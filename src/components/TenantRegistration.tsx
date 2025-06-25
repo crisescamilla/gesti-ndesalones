@@ -1,4 +1,4 @@
-"use client"
+// "use client"
 
 import type React from "react"
 import { useState } from "react"
@@ -12,6 +12,9 @@ import {
   saveTenantOwner,
 } from "../utils/tenantManager"
 import { useTheme } from "../hooks/useTheme"
+import { createTenantInSupabase } from '../utils/supabaseSync'
+
+const origin = typeof window !== "undefined" ? window.location.origin : "";
 
 // Expanded color palette for salon customization
 const COLOR_OPTIONS = [
@@ -141,7 +144,7 @@ const TenantRegistration: React.FC = () => {
         firstName: ownerData.firstName,
         lastName: ownerData.lastName,
         phone: ownerData.phone,
-        passwordHash: await hashPassword(ownerData.password), // In production, use proper hashing
+        passwordHash: await hashPassword(ownerData.password),
         isEmailVerified: false,
         createdAt: new Date().toISOString(),
         tenants: [],
@@ -165,7 +168,7 @@ const TenantRegistration: React.FC = () => {
         subscription: {
           plan: "premium",
           status: "active",
-          expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days trial
+          expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         },
         settings: {
           allowOnlineBooking: true,
@@ -176,7 +179,7 @@ const TenantRegistration: React.FC = () => {
         },
       }
 
-      // Create tenant with admin credentials
+      // Create tenant locally
       const createdTenant = createTenant(tenant, owner.id, {
         firstName: ownerData.firstName,
         lastName: ownerData.lastName,
@@ -188,10 +191,20 @@ const TenantRegistration: React.FC = () => {
       owner.tenants = [createdTenant.id]
       saveTenantOwner(owner)
 
-      setMessage({
-        type: "success",
-        text: "¡Negocio registrado exitosamente! Redirigiendo...",
-      })
+      // Sincronizar con Supabase
+      const syncResult = await createTenantInSupabase(createdTenant, owner)
+      
+      if (syncResult.success) {
+        setMessage({
+          type: "success",
+          text: "¡Negocio registrado exitosamente! Sincronizado con la base de datos. Redirigiendo...",
+        })
+      } else {
+        setMessage({
+          type: "success",
+          text: "¡Negocio registrado localmente! Error de sincronización: " + syncResult.message,
+        })
+      }
 
       // Redirect to tenant URL after 2 seconds
       setTimeout(() => {
@@ -290,6 +303,8 @@ const TenantRegistration: React.FC = () => {
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     className="w-10 h-8 border border-gray-300 rounded cursor-pointer"
+                    aria-label="Seleccionar color personalizado"
+                    title="Seleccionar color personalizado"
                   />
                   <input
                     type="text"
@@ -316,6 +331,7 @@ const TenantRegistration: React.FC = () => {
             <button
               onClick={() => (step === 1 ? window.history.back() : setStep(1))}
               className="mr-4 p-2 text-gray-600 hover:text-gray-800 transition-colors"
+              title="Regresar"
             >
               <ArrowLeft className="w-6 h-6" />
             </button>
@@ -494,6 +510,7 @@ const TenantRegistration: React.FC = () => {
                     value={tenantData.businessType}
                     onChange={(e) => handleBusinessTypeChange(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    aria-label="Seleccionar tipo de negocio"
                   >
                     {businessTypeConfigs.map((config) => (
                       <option key={config.id} value={config.id}>
@@ -524,7 +541,7 @@ const TenantRegistration: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">URL Personalizada *</label>
                   <div className="flex items-center">
                     <span className="bg-gray-100 text-gray-600 px-4 py-3 rounded-l-xl border border-r-0 border-gray-300">
-                      {window.location.origin}/
+                      {origin}/
                     </span>
                     <input
                       type="text"
